@@ -1,0 +1,5 @@
+# Ignores any folder named node_modules in the root or subfolders
+node_modules/
+
+# Ignores any .env file in the root or subfolders
+.env
