@@ -11,6 +11,9 @@ import { appendRequestId } from './middlewares/requestId.js';
 
 const app = express();
 
+
+// Trust proxy for accurate IP addresses
+app.set('trust proxy', 1);
 // ==========================================
 // 1. SECURITY & UTILITY MIDDLEWARES
 // ==========================================
