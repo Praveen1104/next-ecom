@@ -18,6 +18,8 @@ export const getProducts = asyncHandler(async (req, res) => {
         sortType = 'newest', 
         category,
         brand,
+        color,
+        size,
         minPrice,
         maxPrice,
         search
@@ -31,9 +33,21 @@ export const getProducts = asyncHandler(async (req, res) => {
         query.$text = { $search: search };
     }
 
-    // Exact matches
-    if (category) query.category = category;
-    if (brand) query.brand = brand;
+    // Exact matches or Arrays (for multi-select filters)
+    if (category) {
+        query.category = Array.isArray(category) ? { $in: category } : category;
+    }
+    if (brand) {
+        query.brand = Array.isArray(brand) ? { $in: brand } : brand;
+    }
+
+    // Filter by variants (Color and Size)
+    if (color) {
+        query['variants.color'] = Array.isArray(color) ? { $in: color } : color;
+    }
+    if (size) {
+        query['variants.size'] = Array.isArray(size) ? { $in: size } : size;
+    }
 
     // Price range
     if (minPrice || maxPrice) {
@@ -119,26 +133,18 @@ export const getProductById = asyncHandler(async (req, res) => {
  * @access Private/Role restricted
  */
 export const createProduct = asyncHandler(async (req, res) => {
-    const { title, description, price, compareAtPrice, category, brand, stock } = req.body;
-
-    // Handle multiple image uploads
-    const images = [];
-    if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-            const uploadResult = await uploadOnCloudinary(file.path);
-            if (uploadResult) {
-                images.push({
-                    url: uploadResult.url,
-                    public_id: uploadResult.public_id
-                });
-            }
-        }
-    }
-
-    if (images.length === 0) {
-        throw new ApiError(400, "At least one product image is required");
-    }
-
+    const { 
+        title, 
+        description, 
+        price, 
+        compareAtPrice, 
+        category, 
+        brand, 
+        stock,
+        variants,
+        specifications 
+    } = req.body;
+...
     const product = await Product.create({
         title,
         description,
@@ -148,6 +154,8 @@ export const createProduct = asyncHandler(async (req, res) => {
         brand,
         stock: Number(stock),
         images,
+        variants: typeof variants === 'string' ? JSON.parse(variants) : variants,
+        specifications: typeof specifications === 'string' ? JSON.parse(specifications) : specifications,
         seller: req.user._id // Taken from the verified JWT token
     });
 

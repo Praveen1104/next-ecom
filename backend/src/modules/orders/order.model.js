@@ -81,7 +81,14 @@ const orderSchema = new mongoose.Schema({
         required: true,
         enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Processing'
-    }
+    },
+    statusHistory: [
+        {
+            status: { type: String, required: true },
+            timestamp: { type: Date, default: Date.now },
+            message: { type: String }
+        }
+    ]
 }, {
     timestamps: true
 });

@@ -60,6 +60,20 @@ const productSchema = new mongoose.Schema({
             default: 0
         }
     },
+    variants: [
+        {
+            color: { type: String, required: true },
+            size: { type: String, required: true },
+            stock: { type: Number, required: true, min: 0 },
+            sku: { type: String }
+        }
+    ],
+    specifications: [
+        {
+            name: { type: String },
+            value: { type: String }
+        }
+    ],
     seller: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
