@@ -53,7 +53,7 @@ export default function AddProductPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (files.length === 0) {
       toast.error('Please upload at least one image');
       return;
@@ -66,7 +66,7 @@ export default function AddProductPage() {
     files.forEach(file => data.append('images', file));
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app/';
       const response = await axios.post(`${apiUrl}/v1/products`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -216,7 +216,7 @@ export default function AddProductPage() {
               + Add Variant
             </button>
           </div>
-          
+
           <div className="space-y-4">
             {variants.length === 0 ? (
               <p className="text-sm text-gray-500 italic text-center py-4">No variants added yet.</p>
