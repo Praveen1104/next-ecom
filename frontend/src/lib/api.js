@@ -4,7 +4,7 @@
  * for different types of data (Catalog, Inventory, User Profile).
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app/';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app';
 
 /**
  * Fetch Product Catalog

@@ -66,7 +66,7 @@ export default function AddProductPage() {
     files.forEach(file => data.append('images', file));
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app/';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app';
       const response = await axios.post(`${apiUrl}/v1/products`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
