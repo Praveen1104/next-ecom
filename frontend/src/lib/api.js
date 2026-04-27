@@ -4,25 +4,27 @@
  * for different types of data (Catalog, Inventory, User Profile).
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://next-ecom-production.up.railway.app/';
 
 /**
  * Fetch Product Catalog
- * Strategy: Time-based ISR (Incremental Static Regeneration)
- * We cache the catalog for 1 hour (3600 seconds). This ensures fast responses
- * while keeping the data relatively fresh.
+ * Strategy: Time-based ISR
+ * Supports filtering by category, brand, search, and pagination.
  */
-export async function fetchCatalog() {
+export async function fetchCatalog(params = {}) {
   try {
-    // next: { revalidate: 3600 } tells Next.js to cache this request for 1 hour.
-    // If you are using Next.js 15+, you could also use the 'use cache' directive
-    // at the component level, but this fetch option is standard for App Router.
-    const res = await fetch(`${API_BASE_URL}/v1/products`, {
+    const query = new URLSearchParams(params).toString();
+    const url = `${API_BASE_URL}/v1/products${query ? `?${query}` : ''}`;
+
+    const res = await fetch(url, {
       next: { revalidate: 3600 },
     });
-    
+
     if (!res.ok) throw new Error('Failed to fetch catalog');
-    return await res.json();
+    const data = await res.json();
+
+    // The backend returns ApiResponse structure: { success, message, data: { products, pagination } }
+    return data.data?.products || [];
   } catch (error) {
     console.error('Error fetching catalog:', error);
     return [];
@@ -39,7 +41,7 @@ export async function fetchProduct(id) {
     const res = await fetch(`${API_BASE_URL}/v1/products/${id}`, {
       next: { revalidate: 3600 },
     });
-    
+
     if (!res.ok) throw new Error('Failed to fetch product');
     return await res.json();
   } catch (error) {
@@ -60,7 +62,7 @@ export async function fetchInventory(productId) {
     const res = await fetch(`${API_BASE_URL}/v1/inventory/${productId}`, {
       cache: 'no-store',
     });
-    
+
     if (!res.ok) throw new Error('Failed to fetch inventory');
     return await res.json();
   } catch (error) {
@@ -84,7 +86,7 @@ export async function fetchProfile(token) {
         'Authorization': `Bearer ${token}`,
       },
     });
-    
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       console.error('Profile fetch failed:', res.status, errorData);
@@ -106,7 +108,7 @@ export async function loginUser(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Login failed');
   return data;
@@ -121,7 +123,7 @@ export async function signupUser(userData) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData),
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Signup failed');
   return data;
@@ -138,7 +140,7 @@ export async function loginAdmin(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Admin login failed');
   return data;
