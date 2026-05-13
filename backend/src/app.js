@@ -5,7 +5,11 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import compression from 'compression';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { doubleCsrfProtection, csrfErrorHandler, generateToken } from './middlewares/csrf.middleware.js';
 import { apiRateLimiter } from './middlewares/rateLimiter.js';
 import { appendRequestId } from './middlewares/requestId.js';
 
@@ -20,12 +24,23 @@ app.set('trust proxy', 1);
 
 // Cross-Origin Resource Sharing setup
 app.use(cors({
-    origin: true,
-    credentials: true
+    origin: process.env.CORS_ORIGIN || true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-idempotency-key']
 }));
 
 // Helmet helps secure Express apps by setting various HTTP headers (e.g., XSS Protection, NoSniff).
 app.use(helmet());
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// Apply compression to all responses
+app.use(compression());
 
 // Apply Rate Limiting to all requests
 app.use(apiRateLimiter);
@@ -72,6 +87,18 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // 5. ROUTES
 // ==========================================
 
+// CSRF Token Endpoint (Frontend calls this to get a token)
+app.get('/api/v1/csrf-token', (req, res) => {
+    const token = generateToken(req, res);
+    res.status(200).json({
+        success: true,
+        csrfToken: token
+    });
+});
+
+// Apply CSRF protection to all subsequent routes (non-GET)
+app.use(doubleCsrfProtection);
+
 // Healthcheck Route
 app.get('/api/v1/health', (req, res) => {
     res.status(200).json({
@@ -88,6 +115,7 @@ import orderRouter from './modules/orders/order.routes.js';
 import cartRouter from './modules/cart/cart.routes.js';
 import wishlistRouter from './modules/wishlist/wishlist.routes.js';
 import paymentRouter from './modules/payments/payment.routes.js';
+import batchRouter from './modules/batch/batch.routes.js';
 
 // Declare API Routes
 app.use('/api/v1/users', userRouter);
@@ -96,11 +124,13 @@ app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/wishlist', wishlistRouter);
 app.use('/api/v1/payments', paymentRouter);
+app.use('/api/v1/batch', batchRouter);
 
 // ==========================================
 // 5. GLOBAL ERROR HANDLER
 // ==========================================
 // This must be the very last middleware to catch all errors from routes.
+app.use(csrfErrorHandler);
 app.use(errorHandler);
 
 export { app };

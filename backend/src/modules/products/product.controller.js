@@ -3,7 +3,8 @@ import { ApiError } from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import { Product } from './product.model.js';
 import { uploadOnCloudinary } from '../../utils/cloudinary.js';
-import { getCache, setCache, clearCachePattern } from '../../utils/cache.js';
+import { clearCachePattern } from '../../utils/cache.js';
+import { ApiFeatures } from '../../utils/ApiFeatures.js';
 
 /**
  * @route GET /api/v1/products
@@ -11,101 +12,33 @@ import { getCache, setCache, clearCachePattern } from '../../utils/cache.js';
  * @access Public
  */
 export const getProducts = asyncHandler(async (req, res) => {
-    // 1. Destructure query parameters with defaults
-    const {
-        page = 1,
-        limit = 10,
-        sortType = 'newest',
-        category,
-        brand,
-        color,
-        size,
-        minPrice,
-        maxPrice,
-        search
-    } = req.query;
+    // 1. Initialize API Features
+    const features = new ApiFeatures(Product.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
 
-    // 2. Build the query object
-    let query = {};
+    // 2. Execute query
+    const products = await features.query;
 
-    // Text search
-    if (search) {
-        query.$text = { $search: search };
-    }
+    // 3. Get total count for pagination (for the current filters)
+    // Note: We need a fresh query object for countDocuments
+    const filterObj = new ApiFeatures(Product.find(), req.query).filter().query.getFilter();
+    const totalCount = await Product.countDocuments(filterObj);
 
-    // Exact matches or Arrays (for multi-select filters)
-    if (category) {
-        query.category = Array.isArray(category) ? { $in: category } : category;
-    }
-    if (brand) {
-        query.brand = Array.isArray(brand) ? { $in: brand } : brand;
-    }
-
-    // Filter by variants (Color and Size)
-    if (color) {
-        query['variants.color'] = Array.isArray(color) ? { $in: color } : color;
-    }
-    if (size) {
-        query['variants.size'] = Array.isArray(size) ? { $in: size } : size;
-    }
-
-    // Price range
-    if (minPrice || maxPrice) {
-        query.price = {};
-        if (minPrice) query.price.$gte = Number(minPrice);
-        if (maxPrice) query.price.$lte = Number(maxPrice);
-    }
-
-    // 3. Build the sort object
-    let sortOptions = {};
-    if (search) {
-        sortOptions = { score: { $meta: 'textScore' } }; // Sort by relevance if searching
-    } else {
-        switch (sortType) {
-            case 'price_asc': sortOptions = { price: 1 }; break;
-            case 'price_desc': sortOptions = { price: -1 }; break;
-            case 'rating': sortOptions = { 'ratings.average': -1 }; break;
-            case 'newest':
-            default: sortOptions = { createdAt: -1 }; break;
-        }
-    }
-
-    // 4. Calculate pagination
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
-    const skip = (pageNumber - 1) * limitNumber;
-
-    // Check Redis Cache first
-    const cacheKey = `products:${JSON.stringify(req.query)}`;
-    const cachedData = await getCache(cacheKey);
-
-    if (cachedData) {
-        return res.status(200).json(
-            new ApiResponse(200, cachedData, "Products fetched successfully from cache")
-        );
-    }
-
-    // 5. Execute query with Mongoose
-    const products = await Product.find(query)
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(limitNumber);
-
-    // 6. Get total count for frontend pagination
-    const totalCount = await Product.countDocuments(query);
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
 
     const responseData = {
         products,
         pagination: {
             totalCount,
-            currentPage: pageNumber,
-            totalPages: Math.ceil(totalCount / limitNumber),
-            limit: limitNumber
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+            limit
         }
     };
-
-    // Save to Redis Cache (Time-based: 1 hour)
-    await setCache(cacheKey, responseData, 3600);
 
     return res.status(200).json(
         new ApiResponse(200, responseData, "Products fetched successfully")

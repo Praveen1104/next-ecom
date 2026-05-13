@@ -1,43 +1,73 @@
-import dotenv from 'dotenv'; // Restarting to pick up .env changes
+import dotenv from 'dotenv';
+import cluster from 'node:cluster';
+import os from 'node:os';
 import { app } from './app.js';
 import { connectDB } from './config/database.js';
 import { logger } from './config/logger.js';
 import { connectRedis } from './config/redis.js';
 
-// Load environment variables from .env file into process.env
-dotenv.config({
-    path: './.env'
-});
+dotenv.config({ path: './.env' });
 
 const PORT = process.env.PORT || 8000;
+const numCPUs = os.cpus().length;
 
-// Connect to MongoDB and then start the Express server
-connectDB()
-    .then(async () => {
-        // Connect to Redis before starting the server
+if (cluster.isPrimary && process.env.NODE_ENV === 'production') {
+    logger.info(`Primary ${process.pid} is running`);
+
+    // Fork workers for each CPU core
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        logger.error(`Worker ${worker.process.pid} died. Forking a new one...`);
+        cluster.fork();
+    });
+} else {
+    // Workers share the same TCP connection
+    startServer();
+}
+
+async function startServer() {
+    try {
+        await connectDB();
         await connectRedis();
-        logger.info("Redis is also connected !!");
+        
+        // Initialize background workers
+        if (process.env.NODE_ENV === 'production') {
+            await import('./workers/email.worker.js');
+        }
+        
+        logger.info("Database, Redis & Workers initialized !!");
 
         const server = app.listen(PORT, () => {
-            logger.info(`⚙️  Server is running on port: ${PORT}`);
-            logger.info(`🌍 Environment: ${process.env.NODE_ENV}`);
+            logger.info(`⚙️  Server (Worker ${process.pid}) running on port: ${PORT}`);
         });
 
-        // Handle unhandled promise rejections (e.g., failed database connections)
-        process.on('unhandledRejection', (err) => {
-            logger.error('UNHANDLED REJECTION! 💥 Shutting down...', err);
-            // Gracefully shut down the server before exiting the process
+        // Graceful Shutdown
+        const shutdown = () => {
+            logger.info('Shutting down server...');
             server.close(() => {
-                process.exit(1);
+                logger.info('Server closed. Exiting process.');
+                process.exit(0);
             });
-        });
-    })
-    .catch((err) => {
-        logger.error("MONGO db connection failed !!! ", err);
-    });
+        };
 
-// Handle uncaught exceptions (e.g., synchronous errors outside of express routes)
+        process.on('SIGTERM', shutdown);
+        process.on('SIGINT', shutdown);
+
+        process.on('unhandledRejection', (err) => {
+            logger.error('UNHANDLED REJECTION! 💥', err);
+            server.close(() => process.exit(1));
+        });
+
+    } catch (err) {
+        logger.error("Failed to start server:", err);
+        process.exit(1);
+    }
+}
+
 process.on('uncaughtException', (err) => {
-    logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...', err);
+    logger.error('UNCAUGHT EXCEPTION! 💥', err);
     process.exit(1);
 });

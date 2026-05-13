@@ -51,6 +51,22 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String
+    },
+    twoFactorSecret: {
+        type: String,
+        select: false
+    },
+    isTwoFactorEnabled: {
+        type: Boolean,
+        default: false
+    },
+    loginAttempts: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    lockUntil: {
+        type: Number
     }
 }, {
     timestamps: true // Automatically adds createdAt and updatedAt

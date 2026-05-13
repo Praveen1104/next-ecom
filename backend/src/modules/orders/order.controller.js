@@ -2,6 +2,7 @@ import { asyncHandler } from '../../utils/asyncHandler.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import { Order } from './order.model.js';
+import { ApiFeatures } from '../../utils/ApiFeatures.js';
 
 /**
  * @route POST /api/v1/orders
@@ -45,15 +46,11 @@ export const createOrder = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getOrderById = asyncHandler(async (req, res) => {
+    // Note: Authorization is now handled by authorizeOwner middleware in the route
     const order = await Order.findById(req.params.id).populate('user', 'firstName lastName email');
 
     if (!order) {
         throw new ApiError(404, "Order not found");
-    }
-
-    // Ensure the user requesting the order is the one who placed it, or an admin
-    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
-        throw new ApiError(403, "Not authorized to view this order");
     }
 
     res.status(200).json(new ApiResponse(200, order, "Order fetched successfully"));
@@ -65,7 +62,12 @@ export const getOrderById = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getMyOrders = asyncHandler(async (req, res) => {
-    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const features = new ApiFeatures(Order.find({ user: req.user._id }), req.query)
+        .sort()
+        .paginate();
+
+    const orders = await features.query;
+    
     res.status(200).json(new ApiResponse(200, orders, "User orders fetched successfully"));
 });
 

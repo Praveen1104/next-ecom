@@ -47,3 +47,27 @@ export const authorizeRoles = (...roles) => {
         next();
     };
 };
+/**
+ * Middleware to restrict access to the resource owner.
+ * Assumes the resource has a field (default: 'user') that matches the current user's ID.
+ * 
+ * @param {import('mongoose').Model} model - The Mongoose model to query
+ * @param {string} ownerField - The field name that stores the owner's ID
+ */
+export const authorizeOwner = (model, ownerField = 'user') => {
+    return asyncHandler(async (req, res, next) => {
+        const resourceId = req.params.id;
+        const resource = await model.findById(resourceId);
+
+        if (!resource) {
+            throw new ApiError(404, "Resource not found");
+        }
+
+        // Check if user is the owner OR is an ADMIN
+        if (resource[ownerField].toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
+            throw new ApiError(403, "You do not have permission to perform this action on this resource");
+        }
+
+        next();
+    });
+};

@@ -1,21 +1,136 @@
 openapi: 3.0.0
 info:
   title: Myntra Clone E-commerce API
-  description: Enterprise-grade e-commerce backend API
+  description: |
+    Enterprise-grade e-commerce backend API.
+    
+    ### Key Features:
+    - **Performance**: Response caching (Redis), Compression (gzip/brotli), Rate limiting.
+    - **Reliability**: Request deduplication (Idempotency), Batch processing.
+    - **REST Patterns**: Standard pagination, filtering, and sorting across collections.
   version: 1.0.0
+
 servers:
   - url: http://localhost:8000
     description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    idempotencyKey:
+      type: apiKey
+      in: header
+      name: x-idempotency-key
+    csrfToken:
+      type: apiKey
+      in: header
+      name: x-csrf-token
+
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+      description: Page number for pagination
+    limitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 10
+      description: Number of items per page
+    sortParam:
+      in: query
+      name: sort
+      schema:
+        type: string
+      description: Field to sort by (e.g., price, -createdAt)
+    filterParam:
+      in: query
+      name: filter
+      schema:
+        type: object
+      style: deepObject
+      explode: true
+      description: Advanced filtering (e.g., price[gte]=100)
+
 paths:
   /api/v1/health:
     get:
       summary: Healthcheck
+      tags: [System]
       responses:
         '200':
           description: Server is healthy
-  /api/v1/users/register:
+
+  /api/v1/csrf-token:
+    get:
+      summary: Get CSRF token
+      tags: [Security]
+      description: Returns a CSRF token to be used in the x-csrf-token header for non-GET requests.
+      responses:
+        '200':
+          description: CSRF token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  csrfToken:
+                    type: string
+
+  /api/v1/products:
+    get:
+      summary: Get all products
+      tags: [Products]
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Text search across product titles and descriptions
+      responses:
+        '200':
+          description: A paginated list of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+                  message:
+                    type: string
+
+  /api/v1/batch:
     post:
-      summary: Register a new user
+      summary: Execute multiple requests in batch
+      tags: [System]
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -23,33 +138,62 @@ paths:
             schema:
               type: object
               properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '201':
-          description: User created successfully
-  /api/v1/products:
-    get:
-      summary: Get all products
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-        - in: query
-          name: limit
-          schema:
-            type: integer
-        - in: query
-          name: category
-          schema:
-            type: string
+                requests:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum: [GET, POST, PUT, DELETE]
+                      url:
+                        type: string
+                      body:
+                        type: object
       responses:
         '200':
-          description: A list of products with pagination info
+          description: Batch results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          type: object
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        price:
+          type: integer
+        category:
+          type: string
+        brand:
+          type: string
+        stock:
+          type: integer
+
+    Pagination:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+        limit:
+          type: integer

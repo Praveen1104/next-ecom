@@ -2820,3 +2820,59 @@
     at addChunk (node:internal/streams/readable:559:12)
     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
     at Readable.push (node:internal/streams/readable:390:5)
+2026-05-13 21:23:56 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:23:56 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:17 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:17 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:24 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:24 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:32 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:32 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:38 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:38 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:45 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:45 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:52 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:29:52 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:04 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:04 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:10 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:10 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:17 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:17 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:23 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:30:23 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:37:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:37:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:37:41 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:37:41 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:58:40 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 21:58:40 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:03:49 [error]: Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+2026-05-13 22:03:49 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:49 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:49 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:50 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:50 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:51 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:03:53 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:09:58 [error]: Error: getaddrinfo ENOTFOUND shinkansen.proxy.rlwy.net
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-05-13 22:22:03 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:03 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:25 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:25 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:40 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:40 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:48 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:22:48 [error]: Redis client has not been initialized. Call connectRedis first.
