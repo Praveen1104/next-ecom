@@ -10,10 +10,10 @@ const categories = [
 const brands = ['Nike', 'Adidas', 'Apple', 'Samsung', 'Zara', 'H&M'];
 const colors = ['Red', 'Blue', 'Black', 'White', 'Green', 'Yellow'];
 const priceRanges = [
-  { label: 'Under $50', min: 0, max: 50 },
-  { label: '$50 to $100', min: 50, max: 100 },
-  { label: '$100 to $500', min: 100, max: 500 },
-  { label: 'Over $500', min: 500, max: 10000 },
+  { label: 'Under ₹499', min: 0, max: 499 },
+  { label: '₹500 to ₹1999', min: 500, max: 1999 },
+  { label: '₹2000 to ₹4999', min: 2000, max: 4999 },
+  { label: 'Over ₹5000', min: 5000, max: 100000 },
 ];
 
 export default async function ProductsPage({ searchParams }) {
@@ -100,17 +100,27 @@ export default async function ProductsPage({ searchParams }) {
               {/* Color Filter */}
               <div>
                 <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6">Colors</h2>
-                <div className="flex flex-wrap gap-3">
+                <div className="space-y-3">
                   {colors.map((color) => (
                     <Link
                       key={color}
                       href={`/products?${getQueryString({ color: params.color === color ? undefined : color, page: 1 })}`}
-                      title={color}
-                      className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
-                        params.color === color ? 'border-indigo-600 ring-2 ring-indigo-200' : 'border-gray-100 dark:border-gray-800'
+                      className={`flex items-center space-x-3 group cursor-pointer transition-all ${
+                        params.color === color ? 'text-indigo-600 font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
                       }`}
-                      style={{ backgroundColor: color.toLowerCase() }}
-                    ></Link>
+                    >
+                      <input 
+                        type="checkbox" 
+                        readOnly 
+                        checked={params.color === color}
+                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
+                      <span 
+                        className="w-4 h-4 rounded-full border border-gray-100 shadow-sm" 
+                        style={{ backgroundColor: color.toLowerCase() }}
+                      ></span>
+                      <span className="text-sm">{color}</span>
+                    </Link>
                   ))}
                 </div>
               </div>

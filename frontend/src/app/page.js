@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CategoryCard from "../components/CategoryCard";
+import HeroBanner from "../components/HeroBanner";
 
 const trendingCategories = [
   { name: 'Fashion', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=400', count: '1,200+' },
@@ -11,41 +12,8 @@ const trendingCategories = [
 export default function Home() {
   return (
     <div className="bg-white dark:bg-gray-950 font-sans">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1441997641577-45934dd0ee81?auto=format&fit=crop&q=80&w=1600" 
-            className="w-full h-full object-cover opacity-30 dark:opacity-20"
-            alt="Hero Background"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-gray-950/50 dark:to-gray-950"></div>
-        </div>
-
-        <main className="relative z-10 mx-auto max-w-4xl text-center px-4">
-          <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-6xl md:text-7xl">
-            Upgrade Your <span className="text-indigo-600">Lifestyle</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400 sm:text-xl">
-            Discover a curated collection of fashion, electronics, and essentials. 
-            Experience the best of e-commerce with a premium touch.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-            <Link
-              href="/products"
-              className="px-10 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg hover:bg-indigo-700 transition-all hover:scale-105 shadow-lg shadow-indigo-200 dark:shadow-none"
-            >
-              Shop Collection
-            </Link>
-            <Link
-              href="/signup"
-              className="px-10 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-full font-bold text-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
-            >
-              Join the Community
-            </Link>
-          </div>
-        </main>
-      </section>
+      {/* Sliding Banners */}
+      <HeroBanner />
 
       {/* Categories Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
