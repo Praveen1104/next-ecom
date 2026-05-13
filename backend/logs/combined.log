@@ -3220,3 +3220,9 @@
 2026-04-26 23:05:54 [info]: Redis is also connected !!
 2026-04-26 23:05:54 [info]: ⚙️  Server is running on port: 8000
 2026-04-26 23:05:54 [info]: 🌍 Environment: development
+2026-05-13 21:12:45 [info]: 
+ MongoDB connected !! DB HOST: ac-uctkinj-shard-00-01.r5wahge.mongodb.net
+2026-05-13 21:12:46 [info]: Redis client connected successfully
+2026-05-13 21:12:46 [info]: Redis is also connected !!
+2026-05-13 21:12:46 [info]: ⚙️  Server is running on port: 8000
+2026-05-13 21:12:46 [info]: 🌍 Environment: development

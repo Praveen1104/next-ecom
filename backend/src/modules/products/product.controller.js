@@ -12,10 +12,10 @@ import { getCache, setCache, clearCachePattern } from '../../utils/cache.js';
  */
 export const getProducts = asyncHandler(async (req, res) => {
     // 1. Destructure query parameters with defaults
-    const { 
-        page = 1, 
-        limit = 10, 
-        sortType = 'newest', 
+    const {
+        page = 1,
+        limit = 10,
+        sortType = 'newest',
         category,
         brand,
         color,
@@ -133,18 +133,18 @@ export const getProductById = asyncHandler(async (req, res) => {
  * @access Private/Role restricted
  */
 export const createProduct = asyncHandler(async (req, res) => {
-    const { 
-        title, 
-        description, 
-        price, 
-        compareAtPrice, 
-        category, 
-        brand, 
+    const {
+        title,
+        description,
+        price,
+        compareAtPrice,
+        category,
+        brand,
         stock,
         variants,
-        specifications 
+        specifications
     } = req.body;
-...
+
     const product = await Product.create({
         title,
         description,
