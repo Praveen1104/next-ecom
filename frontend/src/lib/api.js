@@ -99,13 +99,38 @@ export async function fetchProfile(token) {
   }
 }
 
+export async function signupUser(userData) {
+  // 1. Ensure we have a CSRF token
+  const csrfToken = cachedCsrfToken || await fetchCsrfToken();
+    
+  const res = await fetch(`${API_BASE_URL}/v1/users/register`, {
+    method: 'POST',
+    headers: { 
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrfToken // Send CSRF token in header
+    },
+    credentials: 'include',
+    body: JSON.stringify(userData),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Signup failed');
+  return data;
+}
+
 /**
  * User Login
  */
 export async function loginUser(email, password) {
+  const csrfToken = cachedCsrfToken || await fetchCsrfToken();
+    
   const res = await fetch(`${API_BASE_URL}/v1/users/login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrfToken
+    },
+    credentials: 'include',
     body: JSON.stringify({ email, password }),
   });
 
@@ -115,18 +140,25 @@ export async function loginUser(email, password) {
 }
 
 /**
- * User Signup
+ * Fetch CSRF token from the backend
  */
-export async function signupUser(userData) {
-  const res = await fetch(`${API_BASE_URL}/v1/users/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userData),
-  });
+let cachedCsrfToken = null;
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Signup failed');
-  return data;
+export async function fetchCsrfToken() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/v1/csrf-token`, {
+            credentials: 'include'
+        });
+        const data = await res.json();
+        if (data.success) {
+            cachedCsrfToken = data.csrfToken;
+            return data.csrfToken;
+        }
+        return null;
+    } catch (error) {
+        console.error('Failed to fetch CSRF token:', error);
+        return null;
+    }
 }
 
 /**
@@ -144,4 +176,87 @@ export async function loginAdmin(email, password) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Admin login failed');
   return data;
+}
+/**
+ * Fetch products belonging to the logged-in seller
+ */
+export async function fetchMyProducts() {
+    const response = await fetch(`${API_BASE_URL}/v1/products/my-products`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')).state.token : ''}`,
+        },
+        credentials: 'include',
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch seller products');
+    }
+
+    const data = await response.json();
+    return data.data;
+}
+
+/**
+ * Add a new product (Seller)
+ * @param {FormData} formData - Includes product details and images
+ */
+export async function addProduct(formData) {
+    const response = await fetch(`${API_BASE_URL}/v1/products`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')).state.token : ''}`,
+            // Do NOT set Content-Type header when sending FormData; 
+            // the browser will set it automatically with the boundary.
+        },
+        credentials: 'include',
+        body: formData
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to add product');
+    return data.data;
+}
+/**
+ * Fetch User Wishlist
+ */
+export async function fetchWishlist() {
+    const response = await fetch(`${API_BASE_URL}/v1/wishlist`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')).state.token : ''}`,
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch wishlist');
+    const data = await response.json();
+    return data.data;
+}
+
+/**
+ * Fetch User Cart
+ */
+export async function fetchCart() {
+    const response = await fetch(`${API_BASE_URL}/v1/cart`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')).state.token : ''}`,
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch cart');
+    const data = await response.json();
+    return data.data;
+}
+
+/**
+ * Fetch User Orders
+ */
+export async function fetchOrders() {
+    const response = await fetch(`${API_BASE_URL}/v1/orders/myorders`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')).state.token : ''}`,
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch orders');
+    const data = await response.json();
+    return data.data;
 }

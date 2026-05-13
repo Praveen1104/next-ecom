@@ -13,6 +13,7 @@ export default function AuthForm({ type, onSubmit, isLoading, error }) {
     lastName: '',
     email: '',
     password: '',
+    role: 'USER', // Default role
   });
 
   const handleChange = (e) => {
@@ -124,6 +125,22 @@ export default function AuthForm({ type, onSubmit, isLoading, error }) {
               />
             </div>
           </div>
+
+          {isSignup && (
+            <div className="flex items-center">
+              <input
+                id="join-as-seller"
+                name="role"
+                type="checkbox"
+                checked={formData.role === 'SELLER'}
+                onChange={(e) => setFormData({ ...formData, role: e.target.checked ? 'SELLER' : 'USER' })}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-colors"
+              />
+              <label htmlFor="join-as-seller" className="ml-2 block text-sm text-gray-900 dark:text-gray-300 font-bold">
+                Register as a <span className="text-indigo-600 uppercase">Seller</span>
+              </label>
+            </div>
+          )}
 
           {!isSignup && !isAdmin && (
             <div className="flex items-center justify-between">

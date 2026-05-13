@@ -24,7 +24,8 @@ export default function SignupPage() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        role: formData.role
       });
       
       // On successful signup, redirect to login page
