@@ -97,3 +97,16 @@ export const createProduct = asyncHandler(async (req, res) => {
 
     return res.status(201).json(new ApiResponse(201, product, "Product created successfully"));
 });
+
+/**
+ * @route GET /api/v1/products/my-products
+ * @desc Get products belonging to the logged-in seller
+ * @access Private/Seller
+ */
+export const getMyProducts = asyncHandler(async (req, res) => {
+    const products = await Product.find({ seller: req.user._id }).sort('-createdAt');
+    
+    return res.status(200).json(
+        new ApiResponse(200, products, "Your products fetched successfully")
+    );
+});

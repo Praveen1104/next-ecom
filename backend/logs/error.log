@@ -2876,3 +2876,57 @@
 2026-05-13 22:22:40 [error]: Redis client has not been initialized. Call connectRedis first.
 2026-05-13 22:22:48 [error]: Redis client has not been initialized. Call connectRedis first.
 2026-05-13 22:22:48 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:32:00 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:32:00 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:33:20 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:33:20 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:33:27 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:33:27 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:34:03 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:34:03 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:34:21 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:34:21 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:40:04 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:40:04 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:41:56 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:41:56 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:29 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:29 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:29 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:29 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:36 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:36 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:36 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:36 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:53 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:42:53 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:43:49 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:43:49 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:44:02 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:44:02 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:45:52 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:45:52 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:05 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:05 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:45 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:45 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:58 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:46:58 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:48:38 [error]: Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-83f19fa5489sm54935b3a.60 - gsmtp
+    at SMTPConnection._formatError (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:887:19)
+    at SMTPConnection._actionAUTHComplete (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:1695:34)
+    at SMTPConnection.<anonymous> (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:626:26)
+    at SMTPConnection._processResponse (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:1072:20)
+    at SMTPConnection._onData (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:847:14)
+    at SMTPConnection._onSocketData (D:\next ecommerce\ecommerce\backend\node_modules\nodemailer\lib\smtp-connection\index.js:217:44)
+    at TLSSocket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+2026-05-13 22:52:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:52:33 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:52:47 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:52:47 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:52:59 [error]: Redis client has not been initialized. Call connectRedis first.
+2026-05-13 22:52:59 [error]: Redis client has not been initialized. Call connectRedis first.

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getProducts, getProductById, createProduct } from './product.controller.js';
+import { getProducts, getProductById, createProduct, getMyProducts } from './product.controller.js';
 import { exportProductsCSV } from './product.stream.controller.js';
 import { verifyJWT, authorizeRoles } from '../../middlewares/auth.middleware.js';
 import { upload } from '../../middlewares/multer.middleware.js';
@@ -23,6 +23,13 @@ router.post(
     idempotencyMiddleware,
     upload.array('images', 5), 
     createProduct
+);
+
+router.get(
+    "/my-products",
+    verifyJWT,
+    authorizeRoles('SELLER', 'ADMIN'),
+    getMyProducts
 );
 
 export default router;

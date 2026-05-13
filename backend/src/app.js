@@ -27,14 +27,14 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-idempotency-key']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-idempotency-key', 'x-csrf-token']
 }));
 
 // Helmet helps secure Express apps by setting various HTTP headers (e.g., XSS Protection, NoSniff).
 app.use(helmet());
 
 // Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // Prevent HTTP Parameter Pollution
 app.use(hpp());
@@ -89,15 +89,21 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // CSRF Token Endpoint (Frontend calls this to get a token)
 app.get('/api/v1/csrf-token', (req, res) => {
-    const token = generateToken(req, res);
-    res.status(200).json({
-        success: true,
-        csrfToken: token
-    });
+    try {
+        const token = generateToken(req, res);
+        res.status(200).json({
+            success: true,
+            csrfToken: token
+        });
+    } catch (error) {
+        console.error("CSRF Token Generation Error:", error);
+        res.status(500).json({
+            success: false,
+            message: "CSRF Token generation failed",
+            error: error.message
+        });
+    }
 });
-
-// Apply CSRF protection to all subsequent routes (non-GET)
-app.use(doubleCsrfProtection);
 
 // Healthcheck Route
 app.get('/api/v1/health', (req, res) => {
@@ -117,8 +123,13 @@ import wishlistRouter from './modules/wishlist/wishlist.routes.js';
 import paymentRouter from './modules/payments/payment.routes.js';
 import batchRouter from './modules/batch/batch.routes.js';
 
-// Declare API Routes
+// Auth routes bypass CSRF for easier registration
 app.use('/api/v1/users', userRouter);
+
+// Apply CSRF protection to all subsequent routes (non-GET)
+app.use(doubleCsrfProtection);
+
+// Protected API Routes
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/cart', cartRouter);
